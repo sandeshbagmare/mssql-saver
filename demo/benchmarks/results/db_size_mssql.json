@@ -1,0 +1,28 @@
+{
+  "mssql": {
+    "checkpoints": {
+      "size_bytes": 27475968,
+      "row_count": 11000,
+      "size_human": "26832 KB"
+    },
+    "checkpoint_blobs": {
+      "size_bytes": 37896192,
+      "row_count": 41800,
+      "size_human": "37008 KB"
+    },
+    "checkpoint_writes": {
+      "size_bytes": 35602432,
+      "row_count": 30800,
+      "size_human": "34768 KB"
+    },
+    "checkpoint_migrations": {
+      "size_bytes": 73728,
+      "row_count": 7,
+      "size_human": "72 KB"
+    },
+    "_total_db": {
+      "size_bytes": 142606336,
+      "size_human": "136.0 MB"
+    }
+  }
+}

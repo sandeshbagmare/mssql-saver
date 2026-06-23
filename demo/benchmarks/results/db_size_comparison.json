@@ -1,0 +1,54 @@
+{
+  "postgres": {
+    "checkpoints": {
+      "size_bytes": 17293312,
+      "row_count": 11000,
+      "size_human": "16.49 MB"
+    },
+    "checkpoint_blobs": {
+      "size_bytes": 1703936,
+      "row_count": 2200,
+      "size_human": "1.62 MB"
+    },
+    "checkpoint_writes": {
+      "size_bytes": 14360576,
+      "row_count": 30800,
+      "size_human": "13.70 MB"
+    },
+    "checkpoint_migrations": {
+      "size_bytes": 24576,
+      "row_count": 10,
+      "size_human": "24.0 KB"
+    },
+    "_total_db": {
+      "size_bytes": 41760447,
+      "size_human": "39.83 MB"
+    }
+  },
+  "mssql": {
+    "checkpoints": {
+      "size_bytes": 53952512,
+      "row_count": 22000,
+      "size_human": "51.45 MB"
+    },
+    "checkpoint_blobs": {
+      "size_bytes": 75448320,
+      "row_count": 83600,
+      "size_human": "71.95 MB"
+    },
+    "checkpoint_writes": {
+      "size_bytes": 72171520,
+      "row_count": 61600,
+      "size_human": "68.83 MB"
+    },
+    "checkpoint_migrations": {
+      "size_bytes": 73728,
+      "row_count": 7,
+      "size_human": "72 KB"
+    },
+    "_total_db": {
+      "size_bytes": 209715200,
+      "size_human": "200.00 MB"
+    }
+  }
+}
