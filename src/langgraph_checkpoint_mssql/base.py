@@ -44,20 +44,21 @@ MIGRATIONS: list[str] = [
         CONSTRAINT PK_cm PRIMARY KEY (v)
     )""",
     # 1 – main checkpoints table
+    # NOTE: 'checkpoint' is a reserved word in T-SQL; bracket-quote the table name.
     """IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='checkpoints')
-    CREATE TABLE checkpoints (
+    CREATE TABLE [checkpoints] (
         thread_id            NVARCHAR(150)  NOT NULL,
         checkpoint_ns        NVARCHAR(255)  NOT NULL DEFAULT '',
         checkpoint_id        NVARCHAR(150)  NOT NULL,
         parent_checkpoint_id NVARCHAR(150)  NULL,
         type                 NVARCHAR(150)  NULL,
-        checkpoint           VARBINARY(MAX) NOT NULL,
+        [checkpoint]         VARBINARY(MAX) NOT NULL,
         metadata             NVARCHAR(MAX)  NOT NULL DEFAULT '{}',
         CONSTRAINT PK_checkpoints PRIMARY KEY (thread_id, checkpoint_ns, checkpoint_id)
     )""",
     # 2 – per-channel blobs (one row per channel × version)
     """IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='checkpoint_blobs')
-    CREATE TABLE checkpoint_blobs (
+    CREATE TABLE [checkpoint_blobs] (
         thread_id     NVARCHAR(150)  NOT NULL,
         checkpoint_ns NVARCHAR(255)  NOT NULL,
         channel       NVARCHAR(255)  NOT NULL,
@@ -68,7 +69,7 @@ MIGRATIONS: list[str] = [
     )""",
     # 3 – pending / intermediate writes
     """IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name='checkpoint_writes')
-    CREATE TABLE checkpoint_writes (
+    CREATE TABLE [checkpoint_writes] (
         thread_id     NVARCHAR(150)  NOT NULL,
         checkpoint_ns NVARCHAR(255)  NOT NULL,
         checkpoint_id NVARCHAR(150)  NOT NULL,
@@ -84,21 +85,21 @@ MIGRATIONS: list[str] = [
     # 4 – thread_id index on checkpoints
     """IF NOT EXISTS (
         SELECT 1 FROM sys.indexes
-        WHERE name='IX_checkpoints_tid' AND object_id=OBJECT_ID('checkpoints')
+        WHERE name='IX_checkpoints_tid' AND object_id=OBJECT_ID('[checkpoints]')
     )
-    CREATE INDEX IX_checkpoints_tid ON checkpoints(thread_id)""",
+    CREATE INDEX IX_checkpoints_tid ON [checkpoints](thread_id)""",
     # 5 – thread_id index on checkpoint_blobs
     """IF NOT EXISTS (
         SELECT 1 FROM sys.indexes
-        WHERE name='IX_cb_tid' AND object_id=OBJECT_ID('checkpoint_blobs')
+        WHERE name='IX_cb_tid' AND object_id=OBJECT_ID('[checkpoint_blobs]')
     )
-    CREATE INDEX IX_cb_tid ON checkpoint_blobs(thread_id)""",
+    CREATE INDEX IX_cb_tid ON [checkpoint_blobs](thread_id)""",
     # 6 – thread_id index on checkpoint_writes
     """IF NOT EXISTS (
         SELECT 1 FROM sys.indexes
-        WHERE name='IX_cw_tid' AND object_id=OBJECT_ID('checkpoint_writes')
+        WHERE name='IX_cw_tid' AND object_id=OBJECT_ID('[checkpoint_writes]')
     )
-    CREATE INDEX IX_cw_tid ON checkpoint_writes(thread_id)""",
+    CREATE INDEX IX_cw_tid ON [checkpoint_writes](thread_id)""",
 ]
 
 # ---------------------------------------------------------------------------
@@ -108,48 +109,48 @@ MIGRATIONS: list[str] = [
 # -- checkpoints: DO-UPDATE upsert (UPDATE first; INSERT if 0 rows affected) --
 # UPDLOCK+HOLDLOCK prevents phantom inserts between the read and the write.
 SQL_UPDATE_CHECKPOINT = """\
-UPDATE checkpoints WITH (UPDLOCK, HOLDLOCK)
-SET    checkpoint = ?,
-       metadata   = ?
+UPDATE [checkpoints] WITH (UPDLOCK, HOLDLOCK)
+SET    [checkpoint] = ?,
+       metadata     = ?
 WHERE  thread_id = ? AND checkpoint_ns = ? AND checkpoint_id = ?"""
 
 SQL_INSERT_CHECKPOINT = """\
-INSERT INTO checkpoints
+INSERT INTO [checkpoints]
     (thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id,
-     type, checkpoint, metadata)
+     type, [checkpoint], metadata)
 VALUES (?, ?, ?, ?, ?, ?, ?)"""
 
 # -- checkpoint_blobs: DO-NOTHING upsert (idempotent – blobs are immutable) --
 SQL_INSERT_BLOB_IF_NOT_EXISTS = """\
-INSERT INTO checkpoint_blobs
+INSERT INTO [checkpoint_blobs]
     (thread_id, checkpoint_ns, channel, version, type, blob)
 SELECT ?, ?, ?, ?, ?, ?
 WHERE NOT EXISTS (
-    SELECT 1 FROM checkpoint_blobs
+    SELECT 1 FROM [checkpoint_blobs]
     WHERE thread_id=? AND checkpoint_ns=? AND channel=? AND version=?
 )"""
 
 # -- checkpoint_writes: DO-UPDATE for regular writes (idx>=0) --
 SQL_UPDATE_WRITE = """\
-UPDATE checkpoint_writes WITH (UPDLOCK)
+UPDATE [checkpoint_writes] WITH (UPDLOCK)
 SET    channel=?, type=?, blob=?, task_path=?
 WHERE  thread_id=? AND checkpoint_ns=? AND checkpoint_id=?
        AND task_id=? AND idx=?"""
 
 SQL_INSERT_WRITE = """\
-INSERT INTO checkpoint_writes
+INSERT INTO [checkpoint_writes]
     (thread_id, checkpoint_ns, checkpoint_id, task_id, idx,
      channel, type, blob, task_path)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 # -- checkpoint_writes: DO-NOTHING for special writes (idx<0, e.g. ERROR) --
 SQL_INSERT_WRITE_IF_NOT_EXISTS = """\
-INSERT INTO checkpoint_writes
+INSERT INTO [checkpoint_writes]
     (thread_id, checkpoint_ns, checkpoint_id, task_id, idx,
      channel, type, blob, task_path)
 SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
 WHERE NOT EXISTS (
-    SELECT 1 FROM checkpoint_writes
+    SELECT 1 FROM [checkpoint_writes]
     WHERE thread_id=? AND checkpoint_ns=? AND checkpoint_id=?
           AND task_id=? AND idx=?
 )"""
@@ -157,28 +158,28 @@ WHERE NOT EXISTS (
 # -- reads --
 SQL_GET_BY_ID = """\
 SELECT thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id,
-       type, checkpoint, metadata
-FROM   checkpoints
+       type, [checkpoint], metadata
+FROM   [checkpoints]
 WHERE  thread_id=? AND checkpoint_ns=? AND checkpoint_id=?"""
 
 SQL_GET_LATEST = """\
 SELECT TOP (1)
        thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id,
-       type, checkpoint, metadata
-FROM   checkpoints
+       type, [checkpoint], metadata
+FROM   [checkpoints]
 WHERE  thread_id=? AND checkpoint_ns=?
 ORDER BY checkpoint_id DESC"""
 
 SQL_GET_WRITES = """\
 SELECT task_id, idx, channel, type, blob
-FROM   checkpoint_writes
+FROM   [checkpoint_writes]
 WHERE  thread_id=? AND checkpoint_ns=? AND checkpoint_id=?
 ORDER BY task_id, idx"""
 
 # -- deletes --
-SQL_DELETE_WRITES      = "DELETE FROM checkpoint_writes WHERE thread_id=?"
-SQL_DELETE_BLOBS       = "DELETE FROM checkpoint_blobs   WHERE thread_id=?"
-SQL_DELETE_CHECKPOINTS = "DELETE FROM checkpoints        WHERE thread_id=?"
+SQL_DELETE_WRITES      = "DELETE FROM [checkpoint_writes] WHERE thread_id=?"
+SQL_DELETE_BLOBS       = "DELETE FROM [checkpoint_blobs]  WHERE thread_id=?"
+SQL_DELETE_CHECKPOINTS = "DELETE FROM [checkpoints]       WHERE thread_id=?"
 
 
 # ---------------------------------------------------------------------------
@@ -267,7 +268,7 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
 
     def _load_blobs(
         self,
-        cur: pyodbc.Cursor,
+        conn: pyodbc.Connection,
         thread_id: str,
         checkpoint_ns: str,
         channel_versions: ChannelVersions,
@@ -279,13 +280,15 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
         # Build a parameterised OR clause — structure is data-driven, values are ?
         placeholders = " OR ".join("(channel=? AND version=?)" for _ in pairs)
         flat = [v for pair in pairs for v in pair]
-        cur.execute(
-            f"SELECT channel, type, blob FROM checkpoint_blobs "
-            f"WHERE thread_id=? AND checkpoint_ns=? AND ({placeholders})",
-            [thread_id, checkpoint_ns] + flat,
-        )
+        with conn.cursor() as cur2:
+            cur2.execute(
+                f"SELECT channel, type, blob FROM [checkpoint_blobs] "
+                f"WHERE thread_id=? AND checkpoint_ns=? AND ({placeholders})",
+                [thread_id, checkpoint_ns] + flat,
+            )
+            rows = cur2.fetchall()
         result: dict[str, Any] = {}
-        for ch, typ, raw in cur.fetchall():
+        for ch, typ, raw in rows:
             if typ == "empty":
                 continue
             result[ch] = self.serde.loads_typed(
@@ -295,15 +298,17 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
 
     def _load_writes(
         self,
-        cur: pyodbc.Cursor,
+        conn: pyodbc.Connection,
         thread_id: str,
         checkpoint_ns: str,
         checkpoint_id: str,
     ) -> list[tuple[str, str, Any]]:
         """Fetch and deserialise pending writes for a checkpoint."""
-        cur.execute(SQL_GET_WRITES, (thread_id, checkpoint_ns, checkpoint_id))
+        with conn.cursor() as cur2:
+            cur2.execute(SQL_GET_WRITES, (thread_id, checkpoint_ns, checkpoint_id))
+            rows = cur2.fetchall()
         out = []
-        for task_id, _idx, channel, typ, raw in cur.fetchall():
+        for task_id, _idx, channel, typ, raw in rows:
             value = self.serde.loads_typed(
                 (typ, bytes(raw) if raw is not None else b"")
             )
@@ -311,7 +316,7 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
         return out
 
     def _row_to_tuple(
-        self, row: tuple, cur: pyodbc.Cursor
+        self, row: tuple, conn: pyodbc.Connection
     ) -> CheckpointTuple:
         """Convert one *checkpoints* row + blob/write lookups into a CheckpointTuple."""
         (
@@ -323,10 +328,10 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
             (typ, bytes(raw) if raw is not None else b"")
         )
         channel_values = self._load_blobs(
-            cur, thread_id, checkpoint_ns, c["channel_versions"]
+            conn, thread_id, checkpoint_ns, c["channel_versions"]
         )
         pending_writes = self._load_writes(
-            cur, thread_id, checkpoint_ns, checkpoint_id
+            conn, thread_id, checkpoint_ns, checkpoint_id
         )
         metadata: CheckpointMetadata = json.loads(metadata_json or "{}")
 
@@ -464,8 +469,8 @@ class BaseMssqlSaver(BaseCheckpointSaver[str]):
 
         sql = (
             "SELECT thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id,"
-            "       type, checkpoint, metadata\n"
-            "FROM   checkpoints"
+            "       type, [checkpoint], metadata\n"
+            "FROM   [checkpoints]"
         )
         if where:
             sql += "\nWHERE  " + " AND ".join(where)

@@ -28,7 +28,7 @@ CONN_STR = os.environ.get(
 
 @pytest.fixture(scope="module")
 def saver():
-    with MssqlSaver(CONN_STR, pool_size=5) as s:
+    with MssqlSaver(CONN_STR, pool_size=25) as s:
         s.setup()
         yield s
 

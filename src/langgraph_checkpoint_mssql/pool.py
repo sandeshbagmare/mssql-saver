@@ -31,7 +31,13 @@ class ConnectionPool:
             with self._lock:
                 conn = self._pool.pop() if self._pool else None
             if conn is None:
-                conn = pyodbc.connect(self._conn_str, autocommit=False)
+                # MARS=yes allows multiple active result sets on one connection,
+                # which is required when _row_to_tuple opens sub-cursors
+                # (for blob/write lookups) while the main cursor is still open.
+                conn_str = self._conn_str
+                if "MARS_Connection" not in conn_str and "mars_connection" not in conn_str.lower():
+                    conn_str = conn_str.rstrip(";") + ";MARS_Connection=yes;"
+                conn = pyodbc.connect(conn_str, autocommit=False)
             yield conn
             conn.commit()
         except Exception:

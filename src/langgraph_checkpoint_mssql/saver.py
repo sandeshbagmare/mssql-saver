@@ -110,11 +110,10 @@ class MssqlSaver(BaseMssqlSaver):
                     cur.execute(SQL_GET_BY_ID, (thread_id, checkpoint_ns, checkpoint_id))
                 else:
                     cur.execute(SQL_GET_LATEST, (thread_id, checkpoint_ns))
-
                 row = cur.fetchone()
-                if row is None:
-                    return None
-                return self._row_to_tuple(row, cur)
+            if row is None:
+                return None
+            return self._row_to_tuple(row, conn)
 
     def list(
         self,
@@ -129,9 +128,9 @@ class MssqlSaver(BaseMssqlSaver):
         with self.pool.connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, params)
-                rows = cur.fetchall()  # materialise before iterating
-                for row in rows:
-                    yield self._row_to_tuple(row, cur)
+                rows = cur.fetchall()  # materialise before yielding
+            tuples = [self._row_to_tuple(row, conn) for row in rows]
+        yield from tuples
 
     def put(
         self,
