@@ -1,0 +1,188 @@
+{
+  "postgres": {
+    "A_distinct": [
+      {
+        "total_invocations": 30,
+        "successful": 30,
+        "errors": 0,
+        "mean": 124.81,
+        "p50": 122.45,
+        "p95": 158.02,
+        "p99": 158.04,
+        "max": 158.04,
+        "rps": 8.0,
+        "config": "r=2 w=3 inv=5"
+      },
+      {
+        "total_invocations": 75,
+        "successful": 75,
+        "errors": 0,
+        "mean": 321.92,
+        "p50": 333.57,
+        "p95": 435.59,
+        "p99": 455.31,
+        "max": 455.31,
+        "rps": 3.1,
+        "config": "r=3 w=5 inv=5"
+      },
+      {
+        "total_invocations": 150,
+        "successful": 150,
+        "errors": 0,
+        "mean": 1052.5,
+        "p50": 1060.2,
+        "p95": 1249.79,
+        "p99": 1309.13,
+        "max": 1317.36,
+        "rps": 1.0,
+        "config": "r=5 w=10 inv=3"
+      }
+    ],
+    "B_shared": [
+      {
+        "total_invocations": 30,
+        "successful": 30,
+        "errors": 0,
+        "mean": 124.23,
+        "p50": 134.34,
+        "p95": 159.67,
+        "p99": 180.31,
+        "max": 180.31,
+        "rps": 8.0,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 150,
+        "error_samples": [],
+        "config": "r=2 w=3 inv=5"
+      },
+      {
+        "total_invocations": 75,
+        "successful": 75,
+        "errors": 0,
+        "mean": 335.14,
+        "p50": 335.41,
+        "p95": 438.09,
+        "p99": 495.89,
+        "max": 495.89,
+        "rps": 3.0,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 375,
+        "error_samples": [],
+        "config": "r=3 w=5 inv=5"
+      },
+      {
+        "total_invocations": 150,
+        "successful": 150,
+        "errors": 0,
+        "mean": 1080.55,
+        "p50": 1123.2,
+        "p95": 1325.03,
+        "p99": 1360.85,
+        "max": 1375.07,
+        "rps": 0.9,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 750,
+        "error_samples": [],
+        "config": "r=5 w=10 inv=3"
+      }
+    ]
+  },
+  "mssql": {
+    "A_distinct": [
+      {
+        "total_invocations": 30,
+        "successful": 30,
+        "errors": 0,
+        "mean": 510.37,
+        "p50": 531.13,
+        "p95": 618.87,
+        "p99": 620.41,
+        "max": 620.41,
+        "rps": 2.0,
+        "config": "r=2 w=3 inv=5"
+      },
+      {
+        "total_invocations": 75,
+        "successful": 75,
+        "errors": 0,
+        "mean": 1538.6,
+        "p50": 1546.91,
+        "p95": 1916.98,
+        "p99": 2032.06,
+        "max": 2032.06,
+        "rps": 0.6,
+        "config": "r=3 w=5 inv=5"
+      },
+      {
+        "total_invocations": 150,
+        "successful": 150,
+        "errors": 0,
+        "mean": 10553.83,
+        "p50": 10026.61,
+        "p95": 17579.78,
+        "p99": 18356.44,
+        "max": 20042.13,
+        "rps": 0.1,
+        "config": "r=5 w=10 inv=3"
+      }
+    ],
+    "B_shared": [
+      {
+        "total_invocations": 30,
+        "successful": 30,
+        "errors": 0,
+        "mean": 638.99,
+        "p50": 647.11,
+        "p95": 729.45,
+        "p99": 762.37,
+        "max": 762.37,
+        "rps": 1.6,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 150,
+        "error_samples": [],
+        "config": "r=2 w=3 inv=5"
+      },
+      {
+        "total_invocations": 75,
+        "successful": 75,
+        "errors": 0,
+        "mean": 1474.0,
+        "p50": 1459.98,
+        "p95": 1697.78,
+        "p99": 2809.42,
+        "max": 2809.42,
+        "rps": 0.7,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 375,
+        "error_samples": [],
+        "config": "r=3 w=5 inv=5"
+      },
+      {
+        "total_invocations": 150,
+        "successful": 150,
+        "errors": 0,
+        "mean": 1307.19,
+        "p50": 1316.8,
+        "p95": 1618.22,
+        "p99": 2323.41,
+        "max": 2362.16,
+        "rps": 0.8,
+        "state_diverged": false,
+        "unique_outputs": 1,
+        "db_has_checkpoint": true,
+        "total_checkpoints_in_db": 750,
+        "error_samples": [],
+        "config": "r=5 w=10 inv=3"
+      }
+    ]
+  }
+}
