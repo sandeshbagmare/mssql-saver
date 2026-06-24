@@ -93,6 +93,6 @@ pytest tests/ -v
 
 ## Research & benchmarks
 
-See [`docs/CONFLUENCE.md`](docs/CONFLUENCE.md) for a full design walkthrough,
+See ["The Book": `docs/LANGGRAPH_MSSQL_GUIDE.md`](docs/LANGGRAPH_MSSQL_GUIDE.md) and [`docs/CONFLUENCE.md`](docs/CONFLUENCE.md) for a full design walkthrough,
 Postgres↔MSSQL translation table, benchmark results, and the conclusion on whether
 SQL Server is a viable LangGraph backend.
