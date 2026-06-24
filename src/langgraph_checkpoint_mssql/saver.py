@@ -3,7 +3,7 @@
 Async methods delegate to ``asyncio.to_thread`` over the same thread-safe pool.
 This deliberately avoids ``aioodbc`` (low release cadence) in favour of the
 well-maintained ``pyodbc`` with a thin async shim — a trade-off documented in
-``docs/CONFERENCE.md``.
+``docs/CONFLUENCE.md``.
 """
 from __future__ import annotations
 

@@ -14,4 +14,4 @@
 - Upserts via UPDATE-then-INSERT with UPDLOCK/HOLDLOCK (avoids MERGE concurrency bugs)
 - Versioned migration system with idempotent DDL
 - Conformance test suite + benchmark harness (see `docs/BENCHMARKS.md`)
-- Detailed conference/research page (`docs/CONFERENCE.md`)
+- Detailed conference/research page (`docs/CONFLUENCE.md`)
