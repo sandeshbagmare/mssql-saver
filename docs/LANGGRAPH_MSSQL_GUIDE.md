@@ -5,7 +5,7 @@
 
 | | |
 |---|---|
-| **Author** | Pawan Nala / Sandesh Bagmare |
+| **Author** | Sandesh Bagmare |
 | **Date** | June 2026 |
 | **Library** | [langgraph-checkpoint-mssql v0.1.0](https://github.com/sandeshbagmare/mssql-saver) |
 | **LangGraph Version** | 1.2.4 / langgraph-checkpoint 4.1.1 |
