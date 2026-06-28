@@ -12,8 +12,14 @@ class Settings(BaseSettings):
         "UID=sa;PWD=SqlPass123!;"
         "Encrypt=yes;TrustServerCertificate=yes;"
     )
+    azure_sql_conn_str: str = (
+        "DRIVER={ODBC Driver 18 for SQL Server};"
+        "SERVER=localhost;DATABASE=langgraph_azure;"
+        "UID=sa;PWD=SqlPass123!;"
+        "Encrypt=yes;TrustServerCertificate=yes;"
+    )
     pool_size: int = 10
-    app_title: str = "LangGraph MSSQL/Postgres Demo"
+    app_title: str = "LangGraph MSSQL/Postgres/Azure SQL Demo"
 
 
 settings = Settings()

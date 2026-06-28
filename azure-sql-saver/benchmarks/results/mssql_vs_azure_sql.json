@@ -1,0 +1,84 @@
+[
+  {
+    "label": "MSSQL",
+    "type": "sequential",
+    "n": 500,
+    "mean_ms": 4.49,
+    "p50_ms": 3.82,
+    "p95_ms": 7.52,
+    "max_ms": 124.22,
+    "rps": 222.6
+  },
+  {
+    "label": "AzureSQL",
+    "type": "sequential",
+    "n": 500,
+    "mean_ms": 3.88,
+    "p50_ms": 3.06,
+    "p95_ms": 7.76,
+    "max_ms": 94.12,
+    "rps": 257.9
+  },
+  {
+    "label": "MSSQL",
+    "type": "concurrent",
+    "n": 200,
+    "workers": 10,
+    "mean_ms": 14.85,
+    "p50_ms": 4.16,
+    "p95_ms": 83.56,
+    "max_ms": 115.14,
+    "rps": 592.8,
+    "errors": 0
+  },
+  {
+    "label": "AzureSQL",
+    "type": "concurrent",
+    "n": 200,
+    "workers": 10,
+    "mean_ms": 6.29,
+    "p50_ms": 4.25,
+    "p95_ms": 27.24,
+    "max_ms": 46.25,
+    "rps": 1438.1,
+    "errors": 0
+  },
+  {
+    "label": "MSSQL",
+    "type": "large_payload",
+    "payload_kb": 50,
+    "n": 20,
+    "mean_ms": 3.24,
+    "p50_ms": 2.17,
+    "max_ms": 19.52
+  },
+  {
+    "label": "AzureSQL",
+    "type": "large_payload",
+    "payload_kb": 50,
+    "n": 20,
+    "mean_ms": 5.43,
+    "p50_ms": 4.34,
+    "max_ms": 19.68
+  },
+  {
+    "label": "MSSQL",
+    "type": "history",
+    "turns": 50,
+    "put_p50_ms": 2.06,
+    "get_p50_first10": 10.77,
+    "get_p50_last10": 2.12,
+    "list_all_ms": 72.79,
+    "total_checkpoints": 50
+  },
+  {
+    "label": "AzureSQL",
+    "type": "history",
+    "turns": 50,
+    "put_p50_ms": 1.51,
+    "get_p50_first10": 0.93,
+    "get_p50_last10": 1.23,
+    "list_all_ms": 46.52,
+    "total_checkpoints": 50
+  }
+]

@@ -8,7 +8,7 @@ from app.services.graph_service import get_thread_history, invoke_graph
 
 router = APIRouter()
 
-VALID_BACKENDS = {"postgres", "mssql"}
+VALID_BACKENDS = {"postgres", "mssql", "azure_sql"}
 
 
 def _check_backend(backend: str) -> str:
